@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Zap, CheckCircle2, Loader2, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
+import { Zap, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
 
 interface ConversionIndicatorProps {
   isConverting: boolean;
@@ -98,38 +98,19 @@ export const ConversionIndicator: React.FC<ConversionIndicatorProps> = ({
       ) : isAllDone ? (
         <motion.div
           key="completed"
-          initial={{ opacity: 0, y: -6 }}
+          initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.3 }}
-          className="w-full bg-[#121415] border border-[#3ECF8E]/40 bg-[#3ECF8E]/5 rounded-2xl p-4 sm:p-5 shadow-lg relative overflow-hidden"
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.25 }}
+          className="w-full bg-[#121415] border border-[#3ECF8E]/30 bg-[#3ECF8E]/5 rounded-xl px-4 py-3 flex items-center justify-between gap-3 shadow-md"
         >
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-[#3ECF8E]/15 border border-[#3ECF8E]/40 flex items-center justify-center text-[#3ECF8E] shrink-0">
-                <CheckCircle2 className="w-5 h-5 text-[#3ECF8E]" />
-              </div>
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-bold text-[#EDEDED] font-mono">
-                    Konverze dokončena – soubory níže jsou již hotové!
-                  </h4>
-                  <span className="px-2 py-0.5 rounded-full bg-[#3ECF8E]/20 text-[#3ECF8E] text-[10px] font-mono font-bold">
-                    ✓ PŘIPRAVENO KE STAŽENÍ
-                  </span>
-                </div>
-                <p className="text-xs text-[#8E9296]">
-                  Všechny obrázky v sekci <strong className="text-[#EDEDED]">Zpracované soubory</strong> níže jsou již úspěšně zkonvertované a optimalizované verze. Můžete si je ihned stáhnout nebo rozkliknout pro porovnání.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-              <span className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-[#17191A] border border-[#232628] text-[#3ECF8E]">
-                {completedCount} {completedCount === 1 ? 'soubor převeden' : completedCount < 5 ? 'soubory převedeny' : 'souborů převedeno'}
-              </span>
-            </div>
+          <div className="flex items-center gap-2.5 text-xs sm:text-sm font-mono font-bold text-[#3ECF8E]">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>Konverze dokončena. Připraveno ke stažení.</span>
           </div>
+          <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-[#17191A] border border-[#232628] text-[#8E9296]">
+            {completedCount} {completedCount === 1 ? 'soubor' : completedCount < 5 ? 'soubory' : 'souborů'}
+          </span>
         </motion.div>
       ) : null}
     </AnimatePresence>

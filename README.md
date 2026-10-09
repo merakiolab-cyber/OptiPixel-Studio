@@ -11,7 +11,7 @@
 
 ---
 
-![OptiPixel Studio - Ukázka aplikace s náhledem konvertovaných souborů](./src/assets/images/app_screenshot_1791581410362.jpg)
+![OptiPixel Studio - Ukázka aplikace s náhledem konvertovaných souborů](./src/assets/images/app_screenshot_1791584602565.jpg)
 
 ---
 

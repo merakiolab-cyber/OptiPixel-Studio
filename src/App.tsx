@@ -12,6 +12,7 @@ import { ControlPanel } from './components/ControlPanel';
 import { SummaryStats } from './components/SummaryStats';
 import { ImageCard } from './components/ImageCard';
 import { ComparisonModal } from './components/ComparisonModal';
+import { ConfirmDeleteModal } from './components/ConfirmDeleteModal';
 import { ConversionIndicator } from './components/ConversionIndicator';
 import { ConversionItem, QualityPreset, TargetFormat, ResizeMode } from './types';
 import { 
@@ -21,7 +22,7 @@ import {
   getImageDimensions,
   getExtension 
 } from './utils/converter';
-import { Zap, Sparkles, Download, Wand2, ShieldCheck, Trash2 } from 'lucide-react';
+import { Download, Trash2 } from 'lucide-react';
 
 export default function App() {
   const [items, setItems] = useState<ConversionItem[]>([]);
@@ -37,6 +38,7 @@ export default function App() {
 
   // UI state
   const [inspectedItem, setInspectedItem] = useState<ConversionItem | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ConversionItem | 'all' | null>(null);
   const [isZipping, setIsZipping] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
   const [currentConvertingName, setCurrentConvertingName] = useState<string>('');
@@ -253,17 +255,38 @@ export default function App() {
   }, [items, globalTargetFormat, calculateInitialDimensions, effectiveQuality, handleReconvertItem]);
 
   /**
-   * Deletes an item from state.
+   * Prompts user for confirmation before deleting a single item.
    */
-  const handleDeleteItem = useCallback((id: string) => {
-    setItems(prev => prev.filter(it => it.id !== id));
-  }, []);
+  const handleDeleteItemPrompt = useCallback((id: string) => {
+    const item = items.find(it => it.id === id);
+    if (item) {
+      setDeleteTarget(item);
+    }
+  }, [items]);
 
   /**
-   * Clears all items.
+   * Prompts user for confirmation before clearing all items.
    */
-  const handleClearAll = useCallback(() => {
-    setItems([]);
+  const handleClearAllPrompt = useCallback(() => {
+    if (items.length > 0) {
+      setDeleteTarget('all');
+    }
+  }, [items.length]);
+
+  /**
+   * Confirms and performs the deletion.
+   */
+  const handleConfirmDelete = useCallback(() => {
+    if (deleteTarget === 'all') {
+      setItems([]);
+    } else if (deleteTarget) {
+      setItems(prev => prev.filter(it => it.id !== deleteTarget.id));
+    }
+    setDeleteTarget(null);
+  }, [deleteTarget]);
+
+  const handleCancelDelete = useCallback(() => {
+    setDeleteTarget(null);
   }, []);
 
   /**
@@ -328,24 +351,6 @@ export default function App() {
 
       {/* Main Content Viewport - Fluid Width Stretching to Window */}
       <main className="flex-1 w-full px-4 sm:px-8 lg:px-12 xl:px-16 py-8 space-y-8">
-        
-        {/* Hero & Intro Section with Playful Motion */}
-        <motion.section 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-3"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#17191A] border border-[#232628] text-xs font-mono text-[#3ECF8E]">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>OptiPixel Studio Engine</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#EDEDED]">
-            Rychlý převodník & bezztrátový pixel resizer obrázků
-          </h1>
-        </motion.section>
-
         {/* 2-Column Split Layout: Left = ControlPanel, Right = DropZone */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-stretch">
           {/* Left Column: Global Controls */}
@@ -424,14 +429,14 @@ export default function App() {
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={handleClearAll}
+                  onClick={handleClearAllPrompt}
                   className="px-3.5 py-2 text-xs font-mono font-medium text-[#8E9296] hover:text-red-400 bg-[#121415] hover:bg-red-500/10 border border-[#232628] hover:border-red-500/30 rounded-xl transition-colors flex items-center gap-1.5 shadow-sm"
                   title="Smazat všechny zpracované položky"
                 >
                   <Trash2 className="w-3.5 h-3.5 text-red-400" />
                   <span>Vymazat vše</span>
                 </motion.button>
-
+                
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
@@ -459,7 +464,7 @@ export default function App() {
                     key={item.id}
                     item={item}
                     onDownload={handleDownloadSingle}
-                    onDelete={handleDeleteItem}
+                    onDelete={handleDeleteItemPrompt}
                     onReconvert={handleReconvertItem}
                     onInspect={setInspectedItem}
                   />
@@ -475,6 +480,14 @@ export default function App() {
         item={inspectedItem}
         onClose={() => setInspectedItem(null)}
         onDownload={handleDownloadSingle}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        target={deleteTarget}
+        totalCount={items.length}
+        onConfirm={handleConfirmDelete}
+        onClose={handleCancelDelete}
       />
 
       {/* Footer */}
