@@ -1,6 +1,6 @@
 # OptiPixel Studio ⚡🖼️
 
-> **Moderní, bleskurychlý a soukromý převodník a bezztrátový pixel resizer obrázků** běžící 100% lokálně ve vašem prohlížeči. Inspirováno minimalistickým tmavým designem Supabase Studio s plynulými pružinovými animacemi.
+> **Moderní, bleskurychlý a soukromý převodník a bezztrátový pixel resizer obrázků** běžící 100% lokálně ve vašem prohlížeči.
 
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -46,21 +46,6 @@
 - **Vše probíhá lokálně:** Obrázky se zpracovávají výhradně v paměti vašeho prohlížeče pomocí HTML5 Canvas a File API.
 - **Žádné odesílání na server:** Vaše fotografie, screenshoty a citlivá grafika nikdy neopouštějí vaše zařízení.
 - Funguje offline a bez nutnosti registrace či API klíčů.
-
----
-
-## 🎨 UI & UX Design
-
-- **Supabase Studio estetika:** Hluboké uhlíkové pozadí (`#0C0D0E`), karty `#121415`, jemné hairline ohraničení (`#232628`) a charakteristická smaragdová akcentní barva (`#3ECF8E`).
-- **Responzivní fluidní rozložení:** Rozhraní se plynule přizpůsobuje šířce libovolného displeje od mobilních telefonů po ultraširoké monitory.
-- **Ergonomický dvousloupcový layout:**
-  - **Levý sloupec:** Globální nastavení konverze, komprese a pixel resizu.
-  - **Pravý sloupec:** Prostorná interaktivní Drag & Drop nahrávací zóna s animovaným zářením.
-- **Plynulé animace (Motion):**
-  - Pružinový klouzavý indikátor (`layoutId`) při přepínání formátů, kvality a zobrazení.
-  - Mikrointerakce s okamžitou zpětnou vazbou při najetí kurzorem a kliknutí.
-  - Jemný shimmer efekt na ukazateli úspory dat.
-  - Zářící odznak při dosažení více než 50% úspory velikosti.
 
 ---
 
