@@ -1,0 +1,6 @@
+{
+  "name": "Image converter to .webp",
+  "description": "Rychlý převodník a bezeztrátový resize obrázků v px (WebP, JPG, PNG) s webovou optimalizací i 100% max. kvalitou originálu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
