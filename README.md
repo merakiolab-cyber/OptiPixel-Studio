@@ -9,11 +9,7 @@
 [![Motion](https://img.shields.io/badge/Motion-Framer-FF0055?logo=framer&logoColor=white)](https://motion.dev/)
 [![Privacy First](https://img.shields.io/badge/Privacy-100%25%20Client--Side-3ECF8E)](https://github.com)
 
----
 
-![OptiPixel Studio - Ukázka aplikace s náhledem konvertovaných souborů](./src/assets/images/app_screenshot_1791584602565.jpg)
-
----
 
 ## 🌟 Klíčové funkce
 
