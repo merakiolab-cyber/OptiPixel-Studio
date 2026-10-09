@@ -1,12 +1,18 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Upload, Sparkles, Image as ImageIcon, Zap, FileCheck } from 'lucide-react';
+import { Upload, Sparkles, Zap, Loader2, ArrowRight } from 'lucide-react';
 
 interface DropZoneProps {
   onFilesSelected: (files: FileList | File[]) => void;
+  isConverting?: boolean;
+  processingCount?: number;
 }
 
-export const DropZone: React.FC<DropZoneProps> = ({ onFilesSelected }) => {
+export const DropZone: React.FC<DropZoneProps> = ({ 
+  onFilesSelected,
+  isConverting = false,
+  processingCount = 0
+}) => {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -104,11 +110,23 @@ export const DropZone: React.FC<DropZoneProps> = ({ onFilesSelected }) => {
 
         {/* Text */}
         <div className="space-y-1.5">
+          {isConverting ? (
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#3ECF8E]/15 border border-[#3ECF8E]/40 text-xs font-mono text-[#3ECF8E] font-bold mb-1 shadow-md animate-pulse">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span>Automatická konverze právě probíhá ({processingCount} v procesu)...</span>
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#17191A] border border-[#232628] text-[11px] font-mono text-[#8E9296] mb-1">
+              <Zap className="w-3 h-3 text-[#3ECF8E]" />
+              <span>Okamžitá automatická konverze po vložení</span>
+            </div>
+          )}
+
           <h3 className="text-lg sm:text-xl font-extrabold text-[#EDEDED] tracking-tight">
             Přetáhněte sem obrázky nebo <span className="text-[#3ECF8E] underline underline-offset-4 decoration-[#3ECF8E]/40">vyberte z PC</span>
           </h3>
           <p className="text-xs sm:text-sm text-[#8E9296]">
-            Podporuje <strong className="text-[#EDEDED]">PNG, JPG, JPEG i WebP</strong>. Hromadná konverze probíhá přímo v prohlížeči.
+            Podporuje <strong className="text-[#EDEDED]">PNG, JPG, JPEG i WebP</strong>. Hromadná konverze se spustí okamžitě přímo v prohlížeči.
           </p>
         </div>
 

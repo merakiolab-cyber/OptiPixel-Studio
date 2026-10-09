@@ -11,6 +11,10 @@
 
 ---
 
+![OptiPixel Studio - Ukázka aplikace s náhledem konvertovaných souborů](./src/assets/images/app_screenshot_1791581410362.jpg)
+
+---
+
 ## 🌟 Klíčové funkce
 
 ### 1. 🔄 Univerzální konverze formátů
@@ -45,7 +49,24 @@
 ### 6. 🔒 100% Soukromí a bezpečnost (Privacy First)
 - **Vše probíhá lokálně:** Obrázky se zpracovávají výhradně v paměti vašeho prohlížeče pomocí HTML5 Canvas a File API.
 - **Žádné odesílání na server:** Vaše fotografie, screenshoty a citlivá grafika nikdy neopouštějí vaše zařízení.
-- Funguje offline a bez nutnosti registrace či API klíčů.
+- **Zero Paid APIs:** Aplikace nevyužívá žádné placené API, žádné externí cloudy ani předplatné.
+- Funguje 100% offline a bez nutnosti registrace či API klíčů.
+
+---
+
+## 🛡️ Bezpečnostní audit (GitHub Ready)
+
+Aplikace byla před zveřejněním na GitHub zkontrolována z hlediska bezpečnosti a ochrany dat:
+
+| Bezpečnostní aspekt | Stav | Podrobnosti |
+|---|---|---|
+| **Placené služby / API** | ✅ **Žádné (0 Kč / $0)** | Žádné napojení na placené konvertory (CloudConvert, TinyPNG apod.) ani placené AI modely. |
+| **Odesílání dat (Síť)** | ✅ **0 síťových požadavků** | Kód neobsahuje žádné `fetch`, `axios` ani `WebSocket` volání pro zpracování souborů. |
+| **Telemetrie a sledování** | ✅ **Žádná telemetrie** | Žádné Google Analytics, trackery, cookie bannery ani reklamní skripty. |
+| **API klíče a tajná data** | ✅ **Žádné tajné klíče** | Repozitář neobsahuje žádné tokeny, privátní klíče ani `.env` tajemství. |
+| **Zranitelnosti závislostí** | ✅ **0 zranitelností** | Čistý audit závislostí (`npm audit: 0 vulnerabilities`). |
+| **Správa paměti v prohlížeči** | ✅ **Chráněno** | Všechny dočasné `blob:` URL adresy jsou po stažení bezpečně uvolněny přes `URL.revokeObjectURL`. |
+| **XSS & Injection ochrana** | ✅ **Chráněno** | Žádný `dangerouslySetInnerHTML`, žádný `eval()`. Vstupní soubory prochází validací MIME typů. |
 
 ---
 
@@ -106,6 +127,7 @@ npm run lint
 │   ├── App.tsx                  # Hlavní layout aplikace a stav konverzí
 │   ├── index.css                # Tailwind CSS v4 konfigurace, fonty a téma
 │   ├── types.ts                 # TypeScript definice a rozhraní
+│   ├── assets/                  # Statické vizuální assety a náhledy aplikace
 │   ├── components/
 │   │   ├── Header.tsx           # Horní lišta s logem, brandingem a akcemi
 │   │   ├── ControlPanel.tsx     # Levý panel globálního nastavení (formát, kvalita, px)

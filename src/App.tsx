@@ -12,6 +12,7 @@ import { ControlPanel } from './components/ControlPanel';
 import { SummaryStats } from './components/SummaryStats';
 import { ImageCard } from './components/ImageCard';
 import { ComparisonModal } from './components/ComparisonModal';
+import { ConversionIndicator } from './components/ConversionIndicator';
 import { ConversionItem, QualityPreset, TargetFormat, ResizeMode } from './types';
 import { 
   formatBytes, 
@@ -20,7 +21,7 @@ import {
   getImageDimensions,
   getExtension 
 } from './utils/converter';
-import { Zap, Sparkles, Download, Wand2, ShieldCheck } from 'lucide-react';
+import { Zap, Sparkles, Download, Wand2, ShieldCheck, Trash2 } from 'lucide-react';
 
 export default function App() {
   const [items, setItems] = useState<ConversionItem[]>([]);
@@ -37,6 +38,8 @@ export default function App() {
   // UI state
   const [inspectedItem, setInspectedItem] = useState<ConversionItem | null>(null);
   const [isZipping, setIsZipping] = useState(false);
+  const [isConverting, setIsConverting] = useState(false);
+  const [currentConvertingName, setCurrentConvertingName] = useState<string>('');
 
   // Effective quality float
   const effectiveQuality = qualityPreset === 'max' ? 1.0 : qualityPreset === 'web' ? 0.82 : customQuality;
@@ -120,9 +123,11 @@ export default function App() {
     }
 
     setItems(prev => [...prev, ...preparedItems]);
+    setIsConverting(true);
 
     // Process conversion for each item
     for (const item of preparedItems) {
+      setCurrentConvertingName(item.originalName);
       try {
         const result = await convertSingleImage(
           item.originalFile,
@@ -130,6 +135,9 @@ export default function App() {
           item.quality,
           { targetWidth: item.targetWidth, targetHeight: item.targetHeight }
         );
+
+        // Perceptible smooth transition so users clearly register the conversion happening
+        await new Promise(res => setTimeout(res, 120));
 
         setItems(prev => prev.map(it => {
           if (it.id === item.id) {
@@ -160,6 +168,9 @@ export default function App() {
         }));
       }
     }
+
+    setIsConverting(false);
+    setCurrentConvertingName('');
   }, [globalTargetFormat, effectiveQuality, qualityPreset, calculateInitialDimensions, globalLockAspectRatio]);
 
   /**
@@ -170,6 +181,9 @@ export default function App() {
 
     const currentItem = items.find(it => it.id === id);
     if (!currentItem) return;
+
+    setIsConverting(true);
+    setCurrentConvertingName(currentItem.originalName);
 
     const targetFormat = customOptions?.targetFormat ?? currentItem.targetFormat;
     const targetWidth = customOptions?.targetWidth ?? currentItem.targetWidth;
@@ -184,6 +198,8 @@ export default function App() {
         quality,
         { targetWidth, targetHeight }
       );
+
+      await new Promise(res => setTimeout(res, 100));
 
       setItems(prev => prev.map(it => {
         if (it.id === id) {
@@ -213,6 +229,9 @@ export default function App() {
         }
         return it;
       }));
+    } finally {
+      setIsConverting(false);
+      setCurrentConvertingName('');
     }
   }, [items]);
 
@@ -305,9 +324,6 @@ export default function App() {
       <Header
         itemCount={items.length}
         completedCount={completedItems.length}
-        onClearAll={handleClearAll}
-        onDownloadAllZip={handleDownloadAllZip}
-        isZipping={isZipping}
       />
 
       {/* Main Content Viewport - Fluid Width Stretching to Window */}
@@ -356,9 +372,22 @@ export default function App() {
 
           {/* Right Column: Upload DropZone */}
           <div className="lg:col-span-6 xl:col-span-6 flex">
-            <DropZone onFilesSelected={handleFilesSelected} />
+            <DropZone 
+              onFilesSelected={handleFilesSelected}
+              isConverting={isConverting}
+              processingCount={items.length - completedItems.length}
+            />
           </div>
         </div>
+
+        {/* Conversion Progress & Status HUD */}
+        <ConversionIndicator
+          isConverting={isConverting}
+          completedCount={completedItems.length}
+          totalCount={items.length}
+          currentFileName={currentConvertingName}
+          targetFormat={globalTargetFormat.toUpperCase()}
+        />
 
         {/* Summary Dashboard Banner */}
         <SummaryStats
@@ -371,24 +400,56 @@ export default function App() {
         {/* List of Image Cards */}
         {items.length > 0 && (
           <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-[#EDEDED] font-mono uppercase tracking-wider flex items-center gap-2">
-                <span>Zpracované soubory</span>
-                <span className="text-xs text-[#3ECF8E] font-normal font-sans">
-                  ({completedItems.length} z {items.length} hotovo)
-                </span>
-              </h3>
+            {/* Header bar positioned directly above the first processed file card */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#232628]">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h3 className="text-sm font-bold text-[#EDEDED] font-mono uppercase tracking-wider flex items-center gap-2">
+                    <span>Zpracované soubory</span>
+                  </h3>
+                  <span className="text-xs text-[#3ECF8E] font-mono px-2.5 py-0.5 rounded-full bg-[#3ECF8E]/15 border border-[#3ECF8E]/30 font-semibold">
+                    {completedItems.length} z {items.length} hotovo
+                  </span>
+                  <span className="text-[11px] font-mono text-[#8E9296] hidden md:inline">
+                    • Výsledné hotové formáty připravené ke stažení
+                  </span>
+                </div>
+                <p className="text-xs text-[#8E9296]">
+                  Soubory níže jsou již finální zkonvertované obrázky (nikoliv pouze nahrané originály ke zpracování).
+                </p>
+              </div>
 
-              {completedItems.length > 1 && (
-                <button
-                  onClick={handleDownloadAllZip}
-                  disabled={isZipping}
-                  className="text-xs font-mono font-semibold text-[#3ECF8E] hover:underline flex items-center gap-1"
+              {/* Top-right action controls above the first card */}
+              <div className="flex items-center gap-2.5 self-end sm:self-center shrink-0">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleClearAll}
+                  className="px-3.5 py-2 text-xs font-mono font-medium text-[#8E9296] hover:text-red-400 bg-[#121415] hover:bg-red-500/10 border border-[#232628] hover:border-red-500/30 rounded-xl transition-colors flex items-center gap-1.5 shadow-sm"
+                  title="Smazat všechny zpracované položky"
                 >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Stáhnout vše jako ZIP</span>
-                </button>
-              )}
+                  <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                  <span>Vymazat vše</span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleDownloadAllZip}
+                  disabled={completedItems.length === 0 || isZipping}
+                  className={`px-4 py-2 text-xs font-mono font-bold rounded-xl transition-all flex items-center gap-2 shadow-lg ${
+                    completedItems.length > 0 && !isZipping
+                      ? 'bg-[#3ECF8E] hover:bg-[#34B27B] text-[#0C0D0E] shadow-[#3ECF8E]/25'
+                      : 'bg-[#17191A] text-[#5C6064] border border-[#232628] cursor-not-allowed'
+                  }`}
+                  title="Stáhnout všechny hotové obrázky v jednom ZIP souboru"
+                >
+                  <Download className={`w-3.5 h-3.5 ${isZipping ? 'animate-bounce' : ''}`} />
+                  <span>
+                    {isZipping ? 'Balím ZIP...' : `Stáhnout ZIP (${completedItems.length})`}
+                  </span>
+                </motion.button>
+              </div>
             </div>
 
             <AnimatePresence>
@@ -418,12 +479,9 @@ export default function App() {
 
       {/* Footer */}
       <footer className="border-t border-[#232628] bg-[#0C0D0E] py-6 text-center text-xs text-[#8E9296] font-mono mt-auto">
-        <div className="w-full px-4 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 OptiPixel Studio. Všechna data zůstávají v bezpečí vašeho prohlížeče.</p>
-          <div className="flex items-center gap-4 text-[11px]">
-            <span className="text-[#3ECF8E]">● Local Canvas Engine</span>
-            <span>WebP / JPG / PNG Resizer</span>
-          </div>
+        <div className="w-full px-4 sm:px-8 lg:px-12 flex items-center justify-center gap-4 text-[11px]">
+          <span className="text-[#3ECF8E]">● Local Canvas Engine</span>
+          <span>WebP / JPG / PNG Resizer</span>
         </div>
       </footer>
     </div>

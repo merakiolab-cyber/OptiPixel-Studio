@@ -114,14 +114,26 @@ export const ImageCard: React.FC<ImageCardProps> = ({
               <Eye className="w-5 h-5 mb-0.5 animate-bounce" />
               <span className="text-[9px] font-mono font-bold">Porovnat</span>
             </div>
-            <span className="absolute bottom-1 right-1 px-1.5 py-0.5 text-[9px] font-mono font-bold bg-[#0C0D0E]/80 text-[#3ECF8E] rounded border border-[#3ECF8E]/30">
-              {targetExt}
+            <span className="absolute bottom-1 right-1 px-1.5 py-0.5 text-[9px] font-mono font-bold bg-[#0C0D0E]/90 text-[#3ECF8E] rounded border border-[#3ECF8E]/40 flex items-center gap-0.5">
+              {item.status === 'completed' ? (
+                <>
+                  <Check className="w-2.5 h-2.5 text-[#3ECF8E]" />
+                  <span>{targetExt}</span>
+                </>
+              ) : item.status === 'processing' ? (
+                <>
+                  <RefreshCw className="w-2.5 h-2.5 animate-spin text-[#3ECF8E]" />
+                  <span>{targetExt}</span>
+                </>
+              ) : (
+                <span>{targetExt}</span>
+              )}
             </span>
           </div>
 
           {/* Details */}
           <div className="min-w-0 flex-1 space-y-1.5">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h4 
                 onClick={() => onInspect(item)}
                 className="text-xs sm:text-sm font-bold text-[#EDEDED] hover:text-[#3ECF8E] cursor-pointer truncate font-mono hover:underline transition-colors flex items-center gap-1.5"
@@ -130,6 +142,20 @@ export const ImageCard: React.FC<ImageCardProps> = ({
                 <span>{item.originalName}</span>
                 <Eye className="w-3.5 h-3.5 text-[#3ECF8E] opacity-70 inline" />
               </h4>
+
+              {item.status === 'completed' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#3ECF8E]/15 border border-[#3ECF8E]/30 text-[10px] font-mono font-bold text-[#3ECF8E]">
+                  <Check className="w-3 h-3 text-[#3ECF8E]" />
+                  <span>Hotovo (Výsledný {targetExt})</span>
+                </span>
+              )}
+
+              {item.status === 'processing' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#3ECF8E]/15 border border-[#3ECF8E]/40 text-[10px] font-mono font-bold text-[#3ECF8E] animate-pulse">
+                  <RefreshCw className="w-3 h-3 animate-spin text-[#3ECF8E]" />
+                  <span>Probíhá konverze...</span>
+                </span>
+              )}
             </div>
 
             {/* Format transition & Dimensions */}
@@ -148,6 +174,15 @@ export const ImageCard: React.FC<ImageCardProps> = ({
                   </span>
                 ) : null}
               </span>
+
+              {item.status === 'completed' && (
+                <>
+                  <span className="text-[#5C6064] hidden sm:inline">•</span>
+                  <span className="text-[#8E9296] hidden sm:inline">
+                    Výsledek ke stažení: <strong className="text-[#EDEDED]">{item.outputName}</strong>
+                  </span>
+                </>
+              )}
             </div>
 
             {/* Size & Animated Progress Savings Bar */}
