@@ -2,14 +2,13 @@
 
 > **Moderní, bleskurychlý a soukromý převodník a bezztrátový pixel resizer obrázků** běžící 100% lokálně ve vašem prohlížeči.
 
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Motion](https://img.shields.io/badge/Motion-Framer-FF0055?logo=framer&logoColor=white)](https://motion.dev/)
-[![Privacy First](https://img.shields.io/badge/Privacy-100%25%20Client--Side-3ECF8E)](https://github.com)
 
 
+---
+
+![OptiPixel Studio - Ukázka aplikace](./src/assets/optipixel_preview.png)
+
+---
 
 ## 🌟 Klíčové funkce
 
